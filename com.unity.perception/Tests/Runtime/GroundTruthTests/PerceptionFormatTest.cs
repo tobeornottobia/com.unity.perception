@@ -163,7 +163,7 @@ namespace GroundTruthTests
         ""velocity"": null,
         ""acceleration"": null
       }},
-      ""filename"": ""RGB<guid>/rgb_{frame}.png"",
+      ""filename"": ""RGB<guid>/rgb_{frame.ToString("D5")}.png"",
       ""format"": ""PNG"",
       ""annotations"": []
     }}
@@ -255,8 +255,8 @@ namespace GroundTruthTests
             DatasetCapture.ResetSimulation();
             Assert.IsFalse(sensorHandle.IsValid);
 
-           var annotationDefinitionsJsonExpected =
-                $@"{{
+            var annotationDefinitionsJsonExpected =
+                 $@"{{
   ""version"": ""{PerceptionEndpoint.version}"",
   ""annotation_definitions"": [
     {{
@@ -303,7 +303,7 @@ namespace GroundTruthTests
 
         class TestMetricDef : MetricDefinition
         {
-            public TestMetricDef() : base("test", "counting things") {}
+            public TestMetricDef() : base("test", "counting things") { }
         }
 
         [UnityTest]
@@ -476,7 +476,7 @@ namespace GroundTruthTests
         ""velocity"": null,
         ""acceleration"": null
       }},
-      ""filename"": ""RGB<guid>/rgb_{frame}.png"",
+      ""filename"": ""RGB<guid>/rgb_{frame.ToString("D5")}.png"",
       ""format"": ""PNG"",
       ""annotations"": []
     }},
@@ -535,7 +535,7 @@ namespace GroundTruthTests
         ""velocity"": null,
         ""acceleration"": null
       }},
-      ""filename"": ""RGB<guid>/rgb_{frame}.png"",
+      ""filename"": ""RGB<guid>/rgb_{frame.ToString("D5")}.png"",
       ""format"": ""PNG"",
       ""annotations"": []
     }}
@@ -543,6 +543,6 @@ namespace GroundTruthTests
 }}";
 
             return (sensor1, sensor2, capturesJsonExpected);
-    }
+        }
     }
 }

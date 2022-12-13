@@ -387,7 +387,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
 
         internal string WriteOutImageFile(int frame, RgbSensor rgb)
         {
-            var path = PathUtils.CombineUniversal(GetProductPath(rgb), $"rgb_{frame}." + PerceptionSettings.instance.RgbImageEncodingFormatString);
+            var path = PathUtils.CombineUniversal(GetProductPath(rgb), $"rgb_{frame.ToString("D5")}." + PerceptionSettings.instance.RgbImageEncodingFormatString);
             PathUtils.WriteAndReportImageFile(path, rgb.buffer);
             RegisterFile(path);
             return path;
