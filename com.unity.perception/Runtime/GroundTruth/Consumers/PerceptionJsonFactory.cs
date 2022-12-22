@@ -13,6 +13,13 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
 {
     static class PerceptionJsonFactory
     {
+#if UNITY_EDITOR
+        public static int internalOffset = 1;
+#else
+        public static int internalOffset = 1;
+#endif
+        public static int externalOffset = 500;
+        
         public static JToken Convert(PerceptionEndpoint consumer, string id, AnnotationDefinition annotationDefinition)
         {
             switch (annotationDefinition)
@@ -60,13 +67,13 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
 
         internal static string WriteOutCapture(PerceptionEndpoint consumer, Frame frame, RgbSensor sensor)
         {
-            var path = consumer.WriteOutImageFile(frame.frame, sensor);
+            var path = consumer.WriteOutImageFile(frame.frame - internalOffset + externalOffset, sensor);
             return consumer.RemoveDatasetPathPrefix(path);
         }
 
         public static JToken Convert(PerceptionEndpoint consumer, Frame frame, RgbSensor sensor)
         {
-            var path = consumer.WriteOutImageFile(frame.frame, sensor);
+            var path = consumer.WriteOutImageFile(frame.frame - internalOffset + externalOffset, sensor);
             var convertedSensor = PerceptionRgbSensor.Convert(sensor);
             return JToken.FromObject(convertedSensor, consumer.Serializer);
         }
@@ -77,7 +84,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
             {
                 case InstanceSegmentationAnnotation i:
                     {
-                        return JToken.FromObject(PerceptionInstanceSegmentationValue.Convert(consumer, frame.frame, i), consumer.Serializer);
+                        return JToken.FromObject(PerceptionInstanceSegmentationValue.Convert(consumer, frame.frame - internalOffset + externalOffset, i), consumer.Serializer);
                     }
                 case BoundingBoxAnnotation b:
                     {
@@ -89,7 +96,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
                     }
                 case SemanticSegmentationAnnotation s:
                     {
-                        return JToken.FromObject(PerceptionSemanticSegmentationValue.Convert(consumer, frame.frame, s), consumer.Serializer);
+                        return JToken.FromObject(PerceptionSemanticSegmentationValue.Convert(consumer, frame.frame - internalOffset + externalOffset, s), consumer.Serializer);
                     }
                 case KeypointAnnotation kp:
                     {
