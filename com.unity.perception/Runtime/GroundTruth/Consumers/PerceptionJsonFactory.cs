@@ -16,7 +16,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
 #if UNITY_EDITOR
         public static int internalOffset = 1;
 #else
-        public static int internalOffset = 1;
+        public static int internalOffset = 0;
 #endif
         public static int externalOffset = 500;
         
