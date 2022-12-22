@@ -11,7 +11,7 @@ using UnityEngine.Perception.Settings;
 // ReSharper disable NotAccessedField.Local
 namespace UnityEngine.Perception.GroundTruth.Consumers
 {
-    static class PerceptionJsonFactory
+    public static class PerceptionJsonFactory
     {
 #if UNITY_EDITOR
         public static int internalOffset = 1;
