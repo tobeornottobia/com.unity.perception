@@ -50,6 +50,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
         /// The number of metrics to write to a single metrics file.
         /// </summary>
         public int metricsPerFile = 150;
+        public int captureOffset = 0;
 
         /// <inheritdoc/>
         public string description => "Produces synthetic data in the perception format.";
@@ -367,7 +368,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
         {
             if (flush || m_CurrentCaptures.Count >= capturesPerFile)
             {
-                WriteCaptureFile(m_CurrentCaptureIndex++, m_CurrentCaptures);
+                WriteCaptureFile(captureOffset + m_CurrentCaptureIndex++, m_CurrentCaptures);
                 m_CurrentCaptures.Clear();
             }
         }
