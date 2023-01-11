@@ -93,6 +93,19 @@ namespace UnityEngine.Perception.Settings
 #endif
         }
 
+        public int GetCaptureOffset()
+        {
+            return userPreferences.TryGetValue($"{endpoint.GetType().FullName}.capture_offset", out int capture_offset) ? capture_offset : 0;
+        }
+
+        public void SetCaptureOffset(int capture_offset)
+        {
+            userPreferences.Add($"{endpoint.GetType().FullName}.capture_offset", capture_offset);
+#if UNITY_EDITOR
+            Save();
+#endif
+        }
+
         public string defaultOutputPath
         {
             get

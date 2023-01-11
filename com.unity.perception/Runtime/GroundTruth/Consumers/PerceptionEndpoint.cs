@@ -50,8 +50,15 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
         /// The number of metrics to write to a single metrics file.
         /// </summary>
         public int metricsPerFile = 150;
-        public int captureOffset = 0;
 
+        /// <summary>
+        /// The number from which should start the numbering of json files.
+        /// </summary>
+        public virtual int captureOffset
+        {
+            get => PerceptionSettings.instance.GetCaptureOffset();
+            set => PerceptionSettings.instance.SetCaptureOffset(value);
+        }
         /// <inheritdoc/>
         public string description => "Produces synthetic data in the perception format.";
 
@@ -368,7 +375,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
         {
             if (flush || m_CurrentCaptures.Count >= capturesPerFile)
             {
-                WriteCaptureFile(captureOffset + m_CurrentCaptureIndex++, m_CurrentCaptures);
+                WriteCaptureFile(m_CurrentCaptureIndex++, m_CurrentCaptures);
                 m_CurrentCaptures.Clear();
             }
         }
@@ -525,7 +532,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
                 captures = captures
             };
 
-            var path = PathUtils.CombineUniversal(datasetPath, $"captures_{index:000}.json");
+            var path = PathUtils.CombineUniversal(datasetPath, $"captures_{captureOffset + index:000}.json");
             WriteJTokenToFile(path, top);
         }
 
