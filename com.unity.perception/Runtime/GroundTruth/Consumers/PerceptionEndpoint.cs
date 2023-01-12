@@ -395,7 +395,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
 
         internal string WriteOutImageFile(int frame, RgbSensor rgb)
         {
-            var path = PathUtils.CombineUniversal(GetProductPath(rgb), $"rgb_{frame.ToString("D5")}." + PerceptionSettings.instance.RgbImageEncodingFormatString);
+            var path = PathUtils.CombineUniversal(GetProductPath(rgb), $"rgb_{frame.ToString("D7")}." + PerceptionSettings.instance.RgbImageEncodingFormatString);
             PathUtils.WriteAndReportImageFile(path, rgb.buffer);
             RegisterFile(path);
             return path;
@@ -510,7 +510,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
                 metrics = metrics
             };
 
-            var path = PathUtils.CombineUniversal(datasetPath, $"metrics_{index:000}.json");
+            var path = PathUtils.CombineUniversal(datasetPath, $"metrics_{index:00000}.json");
             WriteJTokenToFile(path, top);
         }
 
@@ -532,7 +532,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
                 captures = captures
             };
 
-            var path = PathUtils.CombineUniversal(datasetPath, $"captures_{captureOffset + index:000}.json");
+            var path = PathUtils.CombineUniversal(datasetPath, $"captures_{captureOffset + index:00000}.json");
             WriteJTokenToFile(path, top);
         }
 
