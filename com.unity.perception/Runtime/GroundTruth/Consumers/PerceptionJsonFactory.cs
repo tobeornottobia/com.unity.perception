@@ -18,8 +18,8 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
 #else
         public static int internalOffset = 0;
 #endif
-        public static int externalOffset = 500;
-        
+        public static int externalOffset = 0;
+
         public static JToken Convert(PerceptionEndpoint consumer, string id, AnnotationDefinition annotationDefinition)
         {
             switch (annotationDefinition)
