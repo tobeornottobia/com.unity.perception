@@ -152,6 +152,19 @@ namespace UnityEngine.Perception.GroundTruth.Labelers
             m_LabeledObjectColors[frame] = labeledObjectColors;
             cmd.SetBufferData(colorBuffer, labeledObjectColors, 0, 0, colorBuffer.count);
 
+            if(m_SemanticSegmentationColorTexture == null)
+            {
+                Debug.LogError("SemanticSegmentationColorTexture is null. " +
+                               "This can happen if the labeler is not set up correctly.");
+                return;
+            }
+            else if (!m_SemanticSegmentationColorTexture.IsCreated())
+            {
+                Debug.LogWarning("SemanticSegmentationColorTexture is not created. " +
+                               "This can happen if the labeler is not set up correctly.");
+                m_SemanticSegmentationColorTexture.Create();
+            }
+
             // Use a compute shader to map each pixel instance index to a unique color
             // to create the instance segmentation color texture.
             SegmentationUtilities.CreateSegmentationColorTexture(
