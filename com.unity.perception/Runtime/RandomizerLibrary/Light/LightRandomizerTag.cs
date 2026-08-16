@@ -157,13 +157,15 @@ namespace UnityEngine.Perception.Randomization.Randomizers
             // Randomize intensity
             if (!specifyIntensityAsList)
             {
-                LightData.SetIntensity(intensity.Sample(), LightData.lightUnit);
+                // Light.intensity is expressed in Light.lightUnit, so assigning it directly preserves
+                // the unit currently configured on the light.
+                Light.intensity = intensity.Sample();
             }
             else
             {
                 if (intensityList.Count > 0)
                 {
-                    LightData.SetIntensity(intensityList.Sample(), LightData.lightUnit);
+                    Light.intensity = intensityList.Sample();
                 }
             }
 #endif

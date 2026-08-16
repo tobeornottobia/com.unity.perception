@@ -87,7 +87,7 @@ namespace UnityEngine.Perception.GroundTruth
         {
             if (s_SinglePerceptionCamera == null)
             {
-                s_SinglePerceptionCamera = FindObjectOfType<PerceptionCamera>();
+                s_SinglePerceptionCamera = FindAnyObjectByType<PerceptionCamera>();
             }
 
             Mesh sphereMesh = null;

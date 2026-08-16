@@ -9,9 +9,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Upgrade Notes
 
+The Perception package now requires Unity 6.5 (6000.5.5f1) or newer. Support for Unity 2021.3 and 2022.1 has been dropped. The minimum HDRP / SRP Core version is 17.5.0.
+
+`GameObjectOneWayCache` now keys its internal lookup on `EntityId` instead of `int`, following the change of `Object.GetInstanceID()` to `Object.GetEntityId()` in Unity 6.2+. Code that passed instance IDs to this cache needs to be updated accordingly.
+
 ### Added
 
 ### Changed
+
+Raised the minimum supported Unity Editor version to 6000.5 and bumped the package dependencies to the versions shipped with Unity 6.5: Burst 1.8.29, Collections 6.5.0, Newtonsoft Json 3.2.2 and SRP Core 17.5.0.
+
+Replaced the deprecated `RenderPipelineManager.beginFrameRendering` subscriptions in `LabelManager` and `SimulationState` with `RenderPipelineManager.beginContextRendering`, matching the pattern already used by `PerceptionUpdater`.
+
+Replaced the deprecated object lookup APIs (`FindObjectOfType` / `FindObjectsOfType`) with `FindAnyObjectByType` / `FindObjectsByType`, and `GraphicsSettings.renderPipelineAsset` with `GraphicsSettings.defaultRenderPipeline`.
+
+Replaced the deprecated implicit `NativeList<T>` to `NativeArray<T>` conversions with explicit `AsArray()` calls in `ImageEncoder`, `KeypointLabeler`, `OcclusionLabeler` and `RenderedObjectInfoComputer`.
+
+`LightRandomizerTag` now sets `Light.intensity` directly instead of the deprecated `HDAdditionalLightData.SetIntensity`. The intensity is still interpreted in the unit configured on the light, so randomization behaviour is unchanged.
+
+`LabelConfigEditor` now uses `ListView.selectionChanged` and no longer branches on `UNITY_2020_1_OR_NEWER`.
 
 ### Deprecated
 
@@ -20,6 +36,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 ### Known Issues
+
+The package still uses two deprecated Editor APIs that require a larger refactor and are therefore not addressed by the Unity 6.5 upgrade: the `UxmlFactory` / `UxmlTraits` system in `UIntField` and `UxmlUIntAttributeDescription` (to be migrated to `UxmlElementAttribute`), and `EditorAnalytics.RegisterEventWithLimit` / `SendEventWithLimit` in `PerceptionAnalytics` (to be migrated to the `IAnalytic` API). Both currently compile with warnings only.
+
+The `PerceptionHDRP` test project in this repository has not been upgraded and still targets Unity 2021.3.
 
 ## [1.0.0-preview.1] - 2022-11-17
 

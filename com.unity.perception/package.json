@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "com.unity.burst": "1.7.3",
-    "com.unity.collections": "1.2.4",
-    "com.unity.nuget.newtonsoft-json": "3.0.2",
-    "com.unity.render-pipelines.core": "12.1.7"
+    "com.unity.burst": "1.8.29",
+    "com.unity.collections": "6.5.0",
+    "com.unity.nuget.newtonsoft-json": "3.2.2",
+    "com.unity.render-pipelines.core": "17.5.0"
   },
   "description": "Tools for generating large-scale data sets for perception-based machine learning training and validation",
   "displayName": "Perception",
@@ -30,7 +30,7 @@
       "path": "Samples~/ConveyorSample"
     }
   ],
-  "unity": "2021.3",
-  "unityRelease": "7f1",
+  "unity": "6000.5",
+  "unityRelease": "5f1",
   "version": "1.0.0-preview.1"
 }

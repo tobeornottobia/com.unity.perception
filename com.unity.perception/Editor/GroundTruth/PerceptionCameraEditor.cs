@@ -119,8 +119,8 @@ namespace UnityEditor.Perception.GroundTruth
             {
                 if (serializedObject.FindProperty(nameof(perceptionCamera.useAccumulation)).boolValue && (DateTime.Now - m_SceneStatusUpdateTime).TotalMilliseconds > k_UpdateInterval)
                 {
-                    m_OtherPerceptionCameras = FindObjectsOfType<PerceptionCamera>();
-                    m_Scenario = FindObjectOfType<ScenarioBase>();
+                    m_OtherPerceptionCameras = FindObjectsByType<PerceptionCamera>();
+                    m_Scenario = FindAnyObjectByType<ScenarioBase>();
                     m_SceneStatusUpdateTime = DateTime.Now;
                 }
 
@@ -386,7 +386,7 @@ namespace UnityEditor.Perception.GroundTruth
                 var renderPipelineAsset = QualitySettings.GetRenderPipelineAssetAt(i) as HDRenderPipelineAsset;
                 CheckRenderPipelineAsset(renderPipelineAsset, $"Issue with HD Render Pipeline for quality level \"{QualitySettings.names[i]}\":\n", "\nConsider removing unnecessary quality levels");
             }
-            var hdRenderPipelineAsset = UnityEngine.Rendering.GraphicsSettings.renderPipelineAsset as UnityEngine.Rendering.HighDefinition.HDRenderPipelineAsset;
+            var hdRenderPipelineAsset = UnityEngine.Rendering.GraphicsSettings.defaultRenderPipeline as UnityEngine.Rendering.HighDefinition.HDRenderPipelineAsset;
             CheckRenderPipelineAsset(hdRenderPipelineAsset);
 
             var camera = perceptionCamera.gameObject.GetComponent<HDAdditionalCameraData>();

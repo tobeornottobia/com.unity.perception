@@ -20,7 +20,7 @@ namespace UnityEngine.Perception.Randomization.Utilities
         GameObject[] m_GameObjects;
         UniformSampler m_Sampler = new UniformSampler();
         Transform m_CacheParent;
-        Dictionary<int, int> m_InstanceIdToIndex;
+        Dictionary<EntityId, int> m_InstanceIdToIndex;
         List<CachedObjectData>[] m_InstantiatedObjects;
         int[] m_NumObjectsActive;
         int numObjectsInCache { get; set; }
@@ -44,7 +44,7 @@ namespace UnityEngine.Perception.Randomization.Utilities
 
             m_GameObjects = gameObjects;
             m_CacheParent = parent;
-            m_InstanceIdToIndex = new Dictionary<int, int>();
+            m_InstanceIdToIndex = new Dictionary<EntityId, int>();
             m_InstantiatedObjects = new List<CachedObjectData>[gameObjects.Length];
             m_NumObjectsActive = new int[gameObjects.Length];
 
@@ -56,7 +56,7 @@ namespace UnityEngine.Perception.Randomization.Utilities
                     obj.transform.parent = parent;
                     obj.SetActive(false);
                 }
-                var instanceId = obj.GetInstanceID();
+                var instanceId = obj.GetEntityId();
                 if (m_InstanceIdToIndex.ContainsKey(instanceId))
                 {
                     Debug.LogException(new Exception("Duplicated objects were added in the categories, the duplicated object will be ignored\n" +
@@ -80,8 +80,8 @@ namespace UnityEngine.Perception.Randomization.Utilities
         /// <exception cref="ArgumentException"></exception>
         public GameObject GetOrInstantiate(GameObject gameObject)
         {
-            if (!m_InstanceIdToIndex.TryGetValue(gameObject.GetInstanceID(), out var index))
-                throw new ArgumentException($"GameObject {gameObject.name} (ID: {gameObject.GetInstanceID()}) is not in cache.");
+            if (!m_InstanceIdToIndex.TryGetValue(gameObject.GetEntityId(), out var index))
+                throw new ArgumentException($"GameObject {gameObject.name} (ID: {gameObject.GetEntityId()}) is not in cache.");
 
             ++ActiveCachedObjectsCount;
             if (m_NumObjectsActive[index] < m_InstantiatedObjects[index].Count)
