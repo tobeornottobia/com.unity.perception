@@ -149,6 +149,32 @@ namespace UnityEngine.Perception.Settings
         }
 
         /// <summary>
+        /// Gets the index offset for the active endpoint type. The offset shifts the indices used to
+        /// name the generated data, so that a new run can be appended to an already generated dataset
+        /// without having to renumber its files. Set it to the amount of data already present in the
+        /// target dataset, or to 0 to start from the beginning.
+        /// </summary>
+        /// <returns>The index offset, or 0 when none was set for the active endpoint type</returns>
+        public static int GetIndexOffset()
+        {
+            return instance.userPreferences.TryGetValue($"{instance.consumerEndpoint.GetType().FullName}.index_offset", out int indexOffset) ? indexOffset : 0;
+        }
+
+        /// <summary>
+        /// Sets the index offset for the active endpoint type. This will set the offset for the next
+        /// simulation, it will not affect a simulation that is currently executing. In order for this
+        /// to take effect the caller should call <see cref="DatasetCapture.ResetSimulation"/>
+        /// </summary>
+        /// <param name="indexOffset">The index offset. Negative values are treated as 0</param>
+        public static void SetIndexOffset(int indexOffset)
+        {
+            instance.userPreferences.Add($"{instance.consumerEndpoint.GetType().FullName}.index_offset", Mathf.Max(0, indexOffset));
+#if UNITY_EDITOR
+            Save();
+#endif
+        }
+
+        /// <summary>
         /// Default output folder for the dataset generation
         /// </summary>
         public static string defaultOutputPath

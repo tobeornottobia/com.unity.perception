@@ -15,6 +15,8 @@ The Perception package now requires Unity 6.5 (6000.5.5f1) or newer. Support for
 
 ### Added
 
+Added an index offset to the perception and the solo endpoints, configurable through `PerceptionSettings.SetIndexOffset` or the `indexOffset` property of the endpoint. The offset shifts the indices used to name the generated data, so that a run can be appended to an already generated dataset without renaming its files: the solo endpoint starts writing at `sequence.<offset>` and the perception endpoint numbers its images from `rgb_<offset>`.
+
 ### Changed
 
 Raised the minimum supported Unity Editor version to 6000.5 and bumped the package dependencies to the versions shipped with Unity 6.5: Burst 1.8.29, Collections 6.5.0, Newtonsoft Json 3.2.2 and SRP Core 17.5.0.

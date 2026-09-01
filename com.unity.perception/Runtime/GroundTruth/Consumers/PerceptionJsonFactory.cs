@@ -310,7 +310,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
 
         static string CreateFile(PerceptionEndpoint consumer, int frame, SemanticSegmentationAnnotation annotation)
         {
-            var path = PathUtils.CombineUniversal(consumer.GetProductPath(annotation), $"segmentation_{frame}.png");
+            var path = PathUtils.CombineUniversal(consumer.GetProductPath(annotation), $"segmentation_{consumer.indexOffset + frame}.png");
             PathUtils.WriteAndReportImageFile(path, annotation.buffer);
             consumer.RegisterFile(path);
             return path;
@@ -403,7 +403,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
 
         static string CreateFile(PerceptionEndpoint consumer, int frame, InstanceSegmentationAnnotation annotation)
         {
-            var path = PathUtils.CombineUniversal(consumer.GetProductPath(annotation), $"Instance_{frame}.png");
+            var path = PathUtils.CombineUniversal(consumer.GetProductPath(annotation), $"Instance_{consumer.indexOffset + frame}.png");
             PathUtils.WriteAndReportImageFile(path, annotation.buffer);
             consumer.RegisterFile(path);
             return path;
