@@ -108,6 +108,61 @@ namespace GroundTruthTests
             PerceptionSettings.SetOutputBasePath(savePath);
         }
 
+        [UnityTest]
+        public IEnumerator TestSetIndexOffset()
+        {
+            const string id = "camera";
+            const string modality = "camera";
+            const string def = "Cam (FL2-14S3M-C)";
+            const int firstFrame = 1;
+            const CaptureTriggerMode mode = CaptureTriggerMode.Scheduled;
+            const int delta = 1;
+            const int framesBetween = 0;
+
+            PerceptionSettings.endpoint = new PerceptionEndpoint();
+
+            var savePath = PerceptionSettings.GetOutputBasePath();
+            var saveOffset = PerceptionSettings.GetIndexOffset();
+
+            var outputPath = Path.Combine(PerceptionSettings.defaultOutputPath, $"test_{Guid.NewGuid()}");
+            Directory.CreateDirectory(outputPath);
+            PerceptionSettings.SetOutputBasePath(outputPath);
+
+            // captures and metrics are grouped 150 per file, so an offset of 150 frames shifts the
+            // json files by exactly one
+            PerceptionSettings.SetIndexOffset(150);
+
+            DatasetCapture.ResetSimulation();
+
+            var(sensorDef, sensorHandle) = TestHelper.RegisterSensor(id, modality, def, firstFrame, mode, delta, framesBetween);
+            Assert.IsTrue(sensorHandle.IsValid);
+
+            yield return null;
+
+            // grab a handle for the endpoint of the current run
+            var endpoint = (PerceptionEndpoint)DatasetCapture.activateEndpoint;
+
+            DatasetCapture.ResetSimulation();
+            Assert.IsFalse(sensorHandle.IsValid);
+
+            var path = endpoint.datasetPath;
+
+            // restore the settings before asserting so that a failure cannot leak the offset into
+            // the tests that run next
+            PerceptionSettings.SetIndexOffset(saveOffset);
+            PerceptionSettings.SetOutputBasePath(savePath);
+
+            // the run starts numbering from the offset instead of from 0
+            FileAssert.DoesNotExist(Path.Combine(path, "captures_000.json"));
+            FileAssert.DoesNotExist(Path.Combine(path, "metrics_000.json"));
+            FileAssert.Exists(Path.Combine(path, "captures_001.json"));
+            FileAssert.Exists(Path.Combine(path, "metrics_001.json"));
+
+            Directory.Delete(outputPath, true);
+
+            DirectoryAssert.DoesNotExist(outputPath);
+        }
+
 #endif
     }
 }

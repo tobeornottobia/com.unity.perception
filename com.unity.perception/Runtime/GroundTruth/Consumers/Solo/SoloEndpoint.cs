@@ -37,6 +37,19 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
         public string soloDatasetName = "solo";
 
         /// <summary>
+        /// The offset added to the index of the generated sequences. With an offset of N the first
+        /// sequence is written to <c>sequence.N</c> instead of <c>sequence.0</c>, which makes it
+        /// possible to append the output of a run to an already generated dataset without renaming
+        /// anything. The offset is stored in the perception settings, see
+        /// <see cref="PerceptionSettings.GetIndexOffset"/>.
+        /// </summary>
+        public virtual int indexOffset
+        {
+            get => PerceptionSettings.GetIndexOffset();
+            set => PerceptionSettings.SetIndexOffset(value);
+        }
+
+        /// <summary>
         /// THe description of the endpoint
         /// </summary>
         public string description => "The Synthetic Optimized Labeled Objects (Solo) format used to capture generated data.";
@@ -213,7 +226,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
             return path;
         }
 
-        string GetSequenceFolderName(int sequenceIndex) => $"sequence.{sequenceIndex}";
+        string GetSequenceFolderName(int sequenceIndex) => $"sequence.{indexOffset + sequenceIndex}";
 
         /// <summary>
         /// Called at the end of each frame. Contains all of the generated data for the
@@ -246,7 +259,13 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
             var path = GetSequenceDirectoryPath(frame);
             path = PathUtils.CombineUniversal(path, GetFrameStepFilename(frame.step));
 
-            PathUtils.WriteAndReportJsonFile(path, msg.ToJson());
+            var json = msg.ToJson();
+
+            // the frame is written to an offset sequence folder, so the sequence reported inside the
+            // frame data has to be offset as well to keep the two in sync
+            json["sequence"] = indexOffset + frame.sequence;
+
+            PathUtils.WriteAndReportJsonFile(path, json);
             RegisterFile(path);
         }
 

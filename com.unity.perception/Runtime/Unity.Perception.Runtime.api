@@ -351,6 +351,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
         public string datasetPath { get; }
         public string defaultPath { get; }
         public string description { get; }
+        public virtual int indexOffset { get; set; }
         public static string version { get; }
         public PerceptionEndpoint() {}
         public void AnnotationRegistered(UnityEngine.Perception.GroundTruth.DataModel.AnnotationDefinition annotationDefinition);
@@ -373,6 +374,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
         public virtual string currentPath { get; }
         public string defaultPath { get; }
         public string description { get; }
+        public virtual int indexOffset { get; set; }
         public virtual string metadataPath { get; }
         public SoloEndpoint() {}
         public void AnnotationRegistered(UnityEngine.Perception.GroundTruth.DataModel.AnnotationDefinition annotationDefinition);
@@ -2336,9 +2338,11 @@ namespace UnityEngine.Perception.Settings
         public static string defaultOutputPath { get; }
         public static UnityEngine.Perception.GroundTruth.IConsumerEndpoint endpoint { get; set; }
         public PerceptionSettings() {}
+        public static int GetIndexOffset();
         public static string GetOutputBasePath();
         public static UnityEditor.SerializedObject GetSerializedSettings();
         public static void Save();
+        public static void SetIndexOffset(int indexOffset);
         public static void SetOutputBasePath(string path);
     }
 }

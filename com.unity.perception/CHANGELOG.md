@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+Added an index offset to the perception and the solo endpoints, configurable through `PerceptionSettings.SetIndexOffset` or the `indexOffset` property of the endpoint. The offset shifts the indices used to name the generated data, so that a run can be appended to an already generated dataset without renaming its files: the solo endpoint starts writing at `sequence.<offset>` and the perception endpoint numbers its images from `rgb_<offset>`.
+
 ### Changed
 
 ### Deprecated

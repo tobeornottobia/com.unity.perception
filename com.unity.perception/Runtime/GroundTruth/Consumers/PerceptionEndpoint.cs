@@ -55,6 +55,36 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
         /// </summary>
         public int metricsPerFile = 150;
 
+        /// <summary>
+        /// The offset added to the indices used to name the generated data. With an offset of N the
+        /// first image is written as <c>rgb_N</c> instead of <c>rgb_0</c>, which makes it possible to
+        /// append the output of a run to an already generated dataset without renaming anything. The
+        /// offset is stored in the perception settings, see
+        /// <see cref="PerceptionSettings.GetIndexOffset"/>.
+        /// </summary>
+        public virtual int indexOffset
+        {
+            get => PerceptionSettings.GetIndexOffset();
+            set => PerceptionSettings.SetIndexOffset(value);
+        }
+
+        /// <summary>
+        /// The offset applied to the index of the captures files. <see cref="indexOffset"/> counts
+        /// frames while a captures file holds <see cref="capturesPerFile"/> of them, so the frame
+        /// offset is converted to a file offset.
+        /// </summary>
+        int captureFileOffset => CeilingDivide(indexOffset, capturesPerFile);
+
+        /// <summary>
+        /// The offset applied to the index of the metrics files, see <see cref="captureFileOffset"/>.
+        /// </summary>
+        int metricFileOffset => CeilingDivide(indexOffset, metricsPerFile);
+
+        static int CeilingDivide(int value, int divisor)
+        {
+            return value > 0 && divisor > 0 ? (value + divisor - 1) / divisor : 0;
+        }
+
         /// <inheritdoc/>
         public string description => "Produces synthetic data in the perception format.";
 
@@ -398,7 +428,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
 
         internal string WriteOutImageFile(int frame, RgbSensor rgb)
         {
-            var path = PathUtils.CombineUniversal(GetProductPath(rgb), $"rgb_{frame}.png");
+            var path = PathUtils.CombineUniversal(GetProductPath(rgb), $"rgb_{indexOffset + frame}.png");
             PathUtils.WriteAndReportImageFile(path, rgb.buffer);
             RegisterFile(path);
             return path;
@@ -513,7 +543,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
                 metrics = metrics
             };
 
-            var path = PathUtils.CombineUniversal(datasetPath, $"metrics_{index:000}.json");
+            var path = PathUtils.CombineUniversal(datasetPath, $"metrics_{metricFileOffset + index:000}.json");
             WriteJTokenToFile(path, top);
         }
 
@@ -534,7 +564,7 @@ namespace UnityEngine.Perception.GroundTruth.Consumers
                 captures = captures
             };
 
-            var path = PathUtils.CombineUniversal(datasetPath, $"captures_{index:000}.json");
+            var path = PathUtils.CombineUniversal(datasetPath, $"captures_{captureFileOffset + index:000}.json");
             WriteJTokenToFile(path, top);
         }
 
