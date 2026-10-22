@@ -49,6 +49,12 @@ namespace UnityEngine.Perception.GroundTruth.Sensors
         /// </summary>
         public int superResHeight => perceptionCamera.attachedCamera.pixelHeight * (int)superSamplingFactor;
 
+        // A float texture keeps the values above 1 that an EXR image holds.
+        GraphicsFormat SuperResGraphicsFormat =>
+            perceptionCamera.rgbImageEncodingFormat == ImageEncodingFormat.Exr
+                ? perceptionCamera.rgbOutputFormat
+                : GraphicsFormat.R8G8B8A8_UNorm;
+
         /// <inheritdoc/>
         public override CameraSensorIntrinsics intrinsics => new CameraSensorIntrinsics
         {
@@ -65,7 +71,7 @@ namespace UnityEngine.Perception.GroundTruth.Sensors
                 m_SuperSamplingCamera = CameraUtilities.DuplicateCamera(perceptionCamera.attachedCamera);
                 m_SuperSamplingCamera.name = $"{perceptionCamera.name} - Super Resolution";
                 var superResOutputTexture = new RenderTexture(
-                    superResWidth, superResHeight, 32, GraphicsFormat.R8G8B8A8_UNorm)
+                    superResWidth, superResHeight, 32, SuperResGraphicsFormat)
                 {
                     enableRandomWrite = true,
                     filterMode = FilterMode.Bilinear
@@ -182,7 +188,10 @@ namespace UnityEngine.Perception.GroundTruth.Sensors
                 // Down-sample the RGB texture by averaging super resolution pixels in a compute shader.
                 SuperSamplingUtility.Downscale(
                     cmd, m_SuperSamplingCamera.targetTexture, rgbChannelTexture,
-                    pixelWidth, pixelHeight, superSamplingFactor);
+                    pixelWidth, pixelHeight, superSamplingFactor,
+                    perceptionCamera.rgbImageEncodingFormat == ImageEncodingFormat.Exr
+                        ? rgbChannelTexture.graphicsFormat
+                        : GraphicsFormat.R16G16B16A16_UNorm);
 
                 // Downscale the other channel textures using a traditional blit.
                 foreach (var channel in perceptionCamera.channels)

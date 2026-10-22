@@ -13,7 +13,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Added an index offset to the perception and the solo endpoints, configurable through `PerceptionSettings.SetIndexOffset` or the `indexOffset` property of the endpoint. The offset shifts the indices used to name the generated data, so that a run can be appended to an already generated dataset without renaming its files: the solo endpoint starts writing at `sequence.<offset>` and the perception endpoint numbers its images from `rgb_<offset>`.
 
+Added the `PerceptionCamera.rgbImageEncodingFormat` property. Set it to `ImageEncodingFormat.Exr` to write the RGB images as linear OpenEXR files with 16-bit half float channels, or set `PerceptionCamera.rgbExrFloat32` as well for 32-bit float channels. The RGB output texture and the super sampling textures then use a float graphics format, so values above 1 survive. The default stays `ImageEncodingFormat.Png`, so existing projects write the same files.
+
 ### Changed
+
+An optional `tempFormat` parameter on `SuperSamplingUtility.Downscale` sets the format of the temporary texture. The default is the format that the method used before.
 
 ### Deprecated
 

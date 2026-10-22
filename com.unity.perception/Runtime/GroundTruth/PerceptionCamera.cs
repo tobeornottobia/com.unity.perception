@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 using UnityEngine.Perception.GroundTruth.DataModel;
 using UnityEngine.Perception.GroundTruth.Sensors;
 using UnityEngine.Perception.GroundTruth.Sensors.Channels;
@@ -86,9 +88,30 @@ namespace UnityEngine.Perception.GroundTruth
         public bool captureRgbImages = true;
 
         /// <summary>
-        /// The image encoding format used to encode captured RGB images.
+        /// The image encoding format used to encode captured RGB images. Use <see cref="ImageEncodingFormat.Png"/>
+        /// for 8-bit sRGB images, or <see cref="ImageEncodingFormat.Exr"/> for 16-bit float linear images.
+        /// Set it before the camera starts, because the RGB channel reads it when it creates its textures.
         /// </summary>
-        const ImageEncodingFormat k_RgbImageEncodingFormat = ImageEncodingFormat.Png;
+        public ImageEncodingFormat rgbImageEncodingFormat = ImageEncodingFormat.Png;
+
+        /// <summary>
+        /// Writes the EXR images with 32-bit float channels instead of 16-bit half channels.
+        /// It applies only when <see cref="rgbImageEncodingFormat"/> is <see cref="ImageEncodingFormat.Exr"/>.
+        /// </summary>
+        public bool rgbExrFloat32;
+
+        /// <summary>
+        /// The graphics format of the RGB output texture that matches <see cref="rgbImageEncodingFormat"/>.
+        /// </summary>
+        internal GraphicsFormat rgbOutputFormat
+        {
+            get
+            {
+                if (rgbImageEncodingFormat != ImageEncodingFormat.Exr)
+                    return GraphicsFormat.R8G8B8A8_SRGB;
+                return rgbExrFloat32 ? GraphicsFormat.R32G32B32A32_SFloat : GraphicsFormat.R16G16B16A16_SFloat;
+            }
+        }
 
         /// <summary>
         /// Caches access to the camera attached to the perception camera.
@@ -677,7 +700,7 @@ namespace UnityEngine.Perception.GroundTruth
                 projection = sensorIntrinsics.projection,
                 dimension = new Vector2(cameraSensor.pixelWidth, cameraSensor.pixelHeight),
                 matrix = sensorIntrinsics.matrix,
-                imageEncodingFormat = k_RgbImageEncodingFormat
+                imageEncodingFormat = rgbImageEncodingFormat
             };
 
             if (!captureRgbImages)
@@ -699,8 +722,11 @@ namespace UnityEngine.Perception.GroundTruth
             m_Futures.Remove(frame);
 
             var outputTexture = GetChannel<RGBChannel>().outputTexture;
-            ImageEncoder.EncodeImage(data, outputTexture.width, outputTexture.height,
-                outputTexture.graphicsFormat, k_RgbImageEncodingFormat, encodedImageData =>
+            // The readback delivers the raw bytes of the texture. A 16-bit float pixel is 8 bytes, so view the
+            // data as bytes to keep the length right for every graphics format.
+            ImageEncoder.EncodeImage(data.Reinterpret<byte>(UnsafeUtility.SizeOf<Color32>()),
+                outputTexture.width, outputTexture.height,
+                outputTexture.graphicsFormat, rgbImageEncodingFormat, encodedImageData =>
                 {
                     capture.buffer = encodedImageData.ToArray();
                     future.Report(capture);
