@@ -36,13 +36,18 @@ namespace UnityEngine.Perception.GroundTruth.Utilities
         /// The scale factor between the super resolution texture and the output downscaled texture
         /// (scale factor == super res texture width / down scale texture width).
         /// </param>
+        /// <param name="tempFormat">
+        /// The format of the temporary texture that holds the averaged pixels. Use a float format for an HDR output,
+        /// because a UNorm format clips the values above 1.
+        /// </param>
         public static void Downscale(
             CommandBuffer cmd,
             RenderTargetIdentifier superResTexture,
             RenderTargetIdentifier outputTexture,
             int outputWidth,
             int outputHeight,
-            SuperSamplingFactor scaleFactor)
+            SuperSamplingFactor scaleFactor,
+            GraphicsFormat tempFormat = GraphicsFormat.R16G16B16A16_UNorm)
         {
             var threadGroupsX = ComputeUtilities.ThreadGroupsCount(outputWidth, 16);
             var threadGroupsY = ComputeUtilities.ThreadGroupsCount(outputHeight, 16);
@@ -51,7 +56,7 @@ namespace UnityEngine.Perception.GroundTruth.Utilities
             // Create a 16-bit temporary texture to capture the extra bit fidelity of super sampled
             // pixels before performing the linear-to-gamma conversion.
             cmd.GetTemporaryRT(k_Temp16BitLinearRGBTexture, outputWidth, outputHeight, 32,
-                FilterMode.Bilinear, GraphicsFormat.R16G16B16A16_UNorm, 1, true);
+                FilterMode.Bilinear, tempFormat, 1, true);
 
             // Down-sample the RGB texture by averaging super resolution pixels in a compute shader.
             cmd.SetComputeTextureParam(s_SuperSamplingShader, kernelIndex,

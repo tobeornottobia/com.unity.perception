@@ -182,6 +182,8 @@ namespace UnityEngine.Perception.GroundTruth
         public int firstCaptureFrame;
         public int framesBetweenCaptures;
         public string id = @"camera";
+        public bool rgbExrFloat32;
+        public ImageEncodingFormat rgbImageEncodingFormat = ImageEncodingFormat.Png;
         public bool manualSensorAffectSimulationTiming;
         public bool overrideLayerMask;
         public bool showVisualizations = true;
@@ -1477,6 +1479,7 @@ namespace UnityEngine.Perception.GroundTruth.Sensors.Channels
     [UnityEngine.Scripting.APIUpdating.MovedFrom(@"UnityEngine.Perception.GroundTruth")] public class RGBChannel : UnityEngine.Perception.GroundTruth.Sensors.Channels.CameraChannel<Color32>
     {
         public override Color clearColor { get; }
+        public UnityEngine.Experimental.Rendering.GraphicsFormat graphicsFormat { get; }
         public RGBChannel() {}
         public override RenderTexture CreateOutputTexture(int width, int height);
         public override void Execute(CameraChannelInputs inputs, RenderTexture renderTarget);
@@ -1535,7 +1538,7 @@ namespace UnityEngine.Perception.GroundTruth.Utilities
 
     [UnityEngine.Scripting.APIUpdating.MovedFrom(@"UnityEngine.Perception.GroundTruth")] public static class SuperSamplingUtility
     {
-        public static void Downscale(UnityEngine.Rendering.CommandBuffer cmd, UnityEngine.Rendering.RenderTargetIdentifier superResTexture, UnityEngine.Rendering.RenderTargetIdentifier outputTexture, int outputWidth, int outputHeight, UnityEngine.Perception.GroundTruth.Sensors.SuperSamplingFactor scaleFactor);
+        public static void Downscale(UnityEngine.Rendering.CommandBuffer cmd, UnityEngine.Rendering.RenderTargetIdentifier superResTexture, UnityEngine.Rendering.RenderTargetIdentifier outputTexture, int outputWidth, int outputHeight, UnityEngine.Perception.GroundTruth.Sensors.SuperSamplingFactor scaleFactor, UnityEngine.Experimental.Rendering.GraphicsFormat tempFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.R16G16B16A16_UNorm);
     }
 }
 

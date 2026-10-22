@@ -14,6 +14,13 @@ namespace UnityEngine.Perception.GroundTruth.Sensors.Channels
         public override Color clearColor => Color.black;
 
         /// <summary>
+        /// The graphics format of the output texture. An EXR image needs a float texture (16 or 32 bit), which keeps
+        /// the linear values above 1. Any other encoding uses an 8-bit sRGB texture.
+        /// </summary>
+        public GraphicsFormat graphicsFormat =>
+            perceptionCamera != null ? perceptionCamera.rgbOutputFormat : GraphicsFormat.R8G8B8A8_SRGB;
+
+        /// <summary>
         /// Creates render texture with required sizes
         /// </summary>
         /// <param name="width">Width of render texture</param>
@@ -21,7 +28,7 @@ namespace UnityEngine.Perception.GroundTruth.Sensors.Channels
         /// <returns>RenderTexture</returns>
         public override RenderTexture CreateOutputTexture(int width, int height)
         {
-            var texture = new RenderTexture(width, height, 32, GraphicsFormat.R8G8B8A8_SRGB) { name = "RGB Channel" };
+            var texture = new RenderTexture(width, height, 32, graphicsFormat) { name = "RGB Channel" };
             texture.Create();
             return texture;
         }
