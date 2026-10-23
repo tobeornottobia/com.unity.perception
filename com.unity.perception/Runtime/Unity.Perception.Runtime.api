@@ -182,7 +182,6 @@ namespace UnityEngine.Perception.GroundTruth
         public int firstCaptureFrame;
         public int framesBetweenCaptures;
         public string id = @"camera";
-        public bool rgbExrFloat32;
         public ImageEncodingFormat rgbImageEncodingFormat = ImageEncodingFormat.Png;
         public bool manualSensorAffectSimulationTiming;
         public bool overrideLayerMask;
