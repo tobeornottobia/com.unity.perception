@@ -95,23 +95,11 @@ namespace UnityEngine.Perception.GroundTruth
         public ImageEncodingFormat rgbImageEncodingFormat = ImageEncodingFormat.Png;
 
         /// <summary>
-        /// Writes the EXR images with 32-bit float channels instead of 16-bit half channels.
-        /// It applies only when <see cref="rgbImageEncodingFormat"/> is <see cref="ImageEncodingFormat.Exr"/>.
-        /// </summary>
-        public bool rgbExrFloat32;
-
-        /// <summary>
         /// The graphics format of the RGB output texture that matches <see cref="rgbImageEncodingFormat"/>.
         /// </summary>
-        internal GraphicsFormat rgbOutputFormat
-        {
-            get
-            {
-                if (rgbImageEncodingFormat != ImageEncodingFormat.Exr)
-                    return GraphicsFormat.R8G8B8A8_SRGB;
-                return rgbExrFloat32 ? GraphicsFormat.R32G32B32A32_SFloat : GraphicsFormat.R16G16B16A16_SFloat;
-            }
-        }
+        internal GraphicsFormat rgbOutputFormat => rgbImageEncodingFormat == ImageEncodingFormat.Exr
+            ? GraphicsFormat.R16G16B16A16_SFloat
+            : GraphicsFormat.R8G8B8A8_SRGB;
 
         /// <summary>
         /// Caches access to the camera attached to the perception camera.
